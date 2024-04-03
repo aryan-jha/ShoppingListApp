@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ShoppingListAppPreview(){
     ShoppingListApp()
