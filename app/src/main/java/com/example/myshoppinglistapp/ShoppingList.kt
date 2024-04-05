@@ -49,7 +49,8 @@ fun ShoppingListApp() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
             onClick = { showDialogBox = true },
@@ -63,8 +64,25 @@ fun ShoppingListApp() {
                 .fillMaxSize()
                 .padding(15.dp)
         ) {
-            items(sItems) {
-                ShoppingListItem(item = it, {}, {})
+            items(sItems) { item ->
+
+                if (item.isEditing) {
+                    ShoppingEditor(item = item, onEditComplete = { editedName, editedQuantity ->
+                        sItems = sItems.map { it.copy(isEditing = false) }
+                        val editedItem = sItems.find { it.id == item.id }
+                        editedItem?.let {
+                            it.name = editedName
+                            it.quantity = editedQuantity
+                        }
+                    })
+                } else {
+                    ShoppingListItem(item = item, onEditClick = {
+                        sItems = sItems.map { it.copy(isEditing = it.id == item.id) }
+                    },
+                        onDeleteClick = {
+                            sItems = sItems - item
+                        })
+                }
             }
 
         }
@@ -160,7 +178,7 @@ fun ShoppingEditor(item: ShoppingItem, onEditComplete: (String, Int) -> Unit) {
                 },
                 singleLine = true,
                 modifier = Modifier
-                    .wrapContentWidth()
+                    .wrapContentWidth() // takes only space equal to the text eg. if the text is of 5 letters then the space will also be alocated of 5 letters
                     .padding(9.dp)
             )
             BasicTextField(
@@ -204,14 +222,7 @@ fun ShoppingListItem(
         Text(text = item.name, modifier = Modifier.padding(9.dp))
         Text(text = "Qty:${item.quantity.toString()}", modifier = Modifier.padding(9.dp))
 
-        IconButton(
-
-            onClick = {
-                // Handle the click event
-                onEditClick
-            },
-
-            ) {
+        IconButton(onClick = onEditClick) {
             Icon(
                 Icons.Default.Edit,
                 contentDescription = "Edit Button",
@@ -219,9 +230,7 @@ fun ShoppingListItem(
             )
         }
 
-        IconButton(onClick = {
-            onDeleteClick
-        }) {
+        IconButton(onClick = onDeleteClick) {
             Icon(
                 Icons.Default.Delete,
                 contentDescription = null
