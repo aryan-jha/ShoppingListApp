@@ -1,5 +1,7 @@
 package com.example.myshoppinglistapp
 
+import android.graphics.drawable.Icon
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,11 +12,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 
@@ -58,7 +68,7 @@ fun ShoppingListApp(){
                 .padding(15.dp)
         ){
             items(sItems){
-
+                ShoppingListItem(item = it,{},{})
             }
 
         }
@@ -130,3 +140,52 @@ data class ShoppingItem(
     var quantity : Int,
     var isEditing : Boolean = false
 )
+
+@Composable
+fun ShoppingListItem(
+    item : ShoppingItem,
+    onEditClick : () -> Unit,
+    onDeleteClick : () -> Unit
+){
+    Row (
+//        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(9.dp)
+            .border(
+                border = BorderStroke(3.dp, color = Color.Cyan),
+                shape = RoundedCornerShape(20)
+            )
+    ){
+        Text(text = item.name, modifier = Modifier.padding(9.dp))
+        Text(text = "Qty:${item.quantity.toString()}", modifier = Modifier.padding(9.dp))
+
+        IconButton(
+
+            onClick = {
+                // Handle the click event
+                      onEditClick
+            },
+//            modifier = Modifier
+//                .size(48.dp)
+//                .padding(8.dp)
+//
+        ) {
+            Icon(
+                Icons.Default.Edit,
+                contentDescription = "Edit Button",
+                tint = Color.Black // Tint color for the icon
+            )
+        }
+
+        IconButton(onClick = {
+                onDeleteClick
+        }) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = null
+            )
+        }
+
+    }
+}
